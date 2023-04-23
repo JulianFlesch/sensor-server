@@ -2,4 +2,4 @@
 Pipfile
 
 # MQTT Storage
-mosquitto_log/*
+mosquitto_log/mosquitto.log
