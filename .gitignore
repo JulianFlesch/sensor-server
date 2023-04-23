@@ -1,0 +1,5 @@
+# Local Setup
+Pipfile
+
+# MQTT Storage
+mosquitto_log/*

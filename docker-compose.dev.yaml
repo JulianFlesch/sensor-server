@@ -1,0 +1,55 @@
+services:
+
+  backend:
+    build:
+      context: smarthome
+      dockerfile: Dockerfile
+    command: ["python", "/app/manage.py", "runserver", "0.0.0.0:8080"]
+    network_mode: "host"
+    ports:
+      - "8080:8080"
+    volumes:
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/we/media
+    depends_on:
+      - mqtt
+
+  frontend:
+    build:
+      context: dashboard
+      dockerfile: Dockerfile
+    command: npm run dev
+    network_mode: "host"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - backend
+
+  mqtt:
+    image: eclipse-mosquitto
+    restart: always
+    user: mosquitto
+    volumes:
+      - type: bind
+        source: ./mosquitto_config/
+        target: /mosquitto/config/ 
+      - type: bind
+        source: ./mosquitto_log/
+        target: /mosquitto/log/
+      - type: volume
+        source: mqtt_data
+        target: /mosquitto/data/
+    network_mode: "host"
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+
+volumes:
+  mysql_data:
+    external: true
+  static_volume:
+    external: true
+  media_volume:
+    external: true
+  mqtt_data:
+    name: "mqtt-broker-data"
